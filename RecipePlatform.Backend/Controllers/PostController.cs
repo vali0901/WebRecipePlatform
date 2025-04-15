@@ -38,6 +38,20 @@ public class PostController(IUserService userService, IPostService postService) 
             FromServiceResponse(await postService.GetPosts(pagination)) :
             ErrorMessageResult<PagedResponse<PostDTO>>(currentUser.Error);
     }
+    
+    [Authorize]
+    [HttpGet] // This attribute will make the controller respond to a HTTP GET request on the route /api/User/GetPage.
+    public async Task<ActionResult<RequestResponse<PagedResponse<PostDTO>>>> GetPageById([FromQuery] PaginationSearchQueryParams pagination, Guid AuthorId) // The FromQuery attribute will bind the parameters matching the names of
+    // the PaginationSearchQueryParams properties to the object in the method parameter.
+    {
+        var currentUser = await GetCurrentUser();
+
+        return currentUser.Result != null ?
+            FromServiceResponse(await postService.GetPostsByUserId(pagination, AuthorId)) :
+            ErrorMessageResult<PagedResponse<PostDTO>>(currentUser.Error);
+    }
+    
+    
 
     /// <summary>
     /// Adds a new post.

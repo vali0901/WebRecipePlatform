@@ -16,4 +16,5 @@ public interface IPostService
         CancellationToken cancellationToken = default);
     Task<ServiceResponse> UpdatePost(PostUpdateDTO postDto, CancellationToken cancellationToken = default);
     Task<ServiceResponse> DeletePost(Guid id, CancellationToken cancellationToken = default);
+    Task<ServiceResponse<PagedResponse<PostDTO>>> GetPostsByUserId(PaginationSearchQueryParams pagination, Guid authorId, CancellationToken cancellationToken = default);
 }

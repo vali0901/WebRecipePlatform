@@ -62,6 +62,13 @@ public class PostService : IPostService
 
         return ServiceResponse.ForSuccess(result);
     }
+    
+    public async Task<ServiceResponse<PagedResponse<PostDTO>>> GetPostsByUserId(PaginationSearchQueryParams pagination, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var result = await _repository.PageAsync(pagination, new PostProjectionSpec(pagination.Search, userId), cancellationToken); // Use the specification and pagination API to get only some entities from the database.
+
+        return ServiceResponse.ForSuccess(result);
+    }
     public async Task<ServiceResponse> UpdatePost(PostUpdateDTO postDto, CancellationToken cancellationToken = default)
     {
         var post = await _repository.GetAsync(new PostSpec(postDto.Id), cancellationToken);

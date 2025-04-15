@@ -4,6 +4,8 @@ using RecipePlatform.Core.Specifications;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using RecipePlatform.Core.Enums;
 using RecipePlatform.Core.Requests;
 using RecipePlatform.Core.Responses;
 using RecipePlatform.Infrastructure.Database;
@@ -59,11 +61,20 @@ public class RecipeService : IRecipeService
             : ServiceResponse<RecipeDTO>.FromError(new(HttpStatusCode.NotFound, "Recipe not found.")));
     }
     
-    public async Task<ServiceResponse<PagedResponse<RecipeDTO>>> GetRecipes(PaginationSearchQueryParams pagination, CancellationToken cancellationToken = default)
+    public async Task<ServiceResponse<PagedResponse<RecipeDTO>>> GetRecipes(PaginationSearchQueryParams pagination, UserDTO currentUser, CancellationToken cancellationToken = default)
     {
-        var result = await _repository.PageAsync(pagination, new RecipeProjectionSpec(pagination.Search), cancellationToken); // Use the specification and pagination API to get only some entities from the database.
-
-        return ServiceResponse.ForSuccess(result);
+        if (currentUser.Role == UserRoleEnum.Admin)
+        {
+            var result = await _repository.PageAsync(pagination, new RecipeProjectionSpec(pagination.Search),
+                cancellationToken); // Use the specification and pagination API to get only some entities from the database.
+            return ServiceResponse.ForSuccess(result);
+        }
+        else
+        {
+            var result = await _repository.PageAsync(pagination, new RecipeProjectionSpec(pagination.Search, currentUser.Id),
+                cancellationToken);
+            return ServiceResponse.ForSuccess(result);
+        }
     }
 
     public async Task<ServiceResponse> UpdateRecipe(RecipeUpdateDTO recipeDto, CancellationToken cancellationToken = default)

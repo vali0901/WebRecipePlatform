@@ -36,7 +36,7 @@ public class RecipeController(IUserService userService, IRecipeService recipeSer
         var currentUser = await GetCurrentUser();
 
         return currentUser.Result != null ?
-            FromServiceResponse(await recipeService.GetRecipes(pagination)) :
+            FromServiceResponse(await recipeService.GetRecipes(pagination, currentUser.Result)) :
             ErrorMessageResult<PagedResponse<RecipeDTO>>(currentUser.Error);
     }
 
