@@ -120,6 +120,9 @@ public class UserService : IUserService
 
             await _repository.UpdateAsync(entity, cancellationToken); // Update the entity and persist the changes.
         }
+        
+        await _mailService.SendMail(user.Email, "Account Updated!", MailTemplates.UserUpdateTemplate(user.Name), true, "My App", cancellationToken); // You can send a notification on the user email. Change the email if you want.
+
 
         return ServiceResponse.ForSuccess();
     }
