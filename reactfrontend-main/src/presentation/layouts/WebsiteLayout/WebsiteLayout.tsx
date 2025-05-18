@@ -1,4 +1,4 @@
-import NavBar from "@presentation/components/ui/NavBar";
+import Navbar from "@presentation/layouts/Navbar/Navbar";
 import { Footer } from "../Footer";
 import { MainContent } from "../MainContent";
 import { UserRoleEnum } from "@infrastructure/apis/client";
@@ -21,7 +21,7 @@ export const WebsiteLayout = memo(
     const location = useLocation();
 
     return <div className="flex flex-col min-h-screen">
-      <NavBar isAdmin={isAdmin} isLoggedIn={loggedIn} onLogout={handleLogout} />
+      <Navbar isAdmin={isAdmin} isLoggedIn={loggedIn} onLogout={handleLogout} />
       <MainContent>{children}</MainContent>
       <Footer />
     </div>

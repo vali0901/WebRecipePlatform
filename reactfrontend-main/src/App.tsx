@@ -20,7 +20,7 @@ export function App() {
   return (
     <AppIntlProvider>
       <ToastNotifier />
-      {/* NavBar eliminat, este deja inclus în WebsiteLayout! */}
+      {}
       <Routes>
         <Route path={AppRoute.Index} element={<HomePage />} />
         <Route path={AppRoute.Register} element={<RegisterPage />} />

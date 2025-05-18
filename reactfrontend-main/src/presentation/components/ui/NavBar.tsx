@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppRoute } from "../../../routes";
+import { NavbarLanguageSelector } from "./NavbarLanguageSelector/NavbarLanguageSelector";
 
 const NavBar: React.FC<{ isAdmin: boolean; isLoggedIn: boolean; onLogout?: () => void }> = ({ isAdmin, isLoggedIn, onLogout }) => {
   const navigate = useNavigate();
@@ -20,9 +21,12 @@ const NavBar: React.FC<{ isAdmin: boolean; isLoggedIn: boolean; onLogout?: () =>
       {isAdmin && <Link to={AppRoute.Users} className="text-md text-gray-700 hover:text-blue-700 transition">Utilizatori</Link>}
       <span className="flex-1" />
       {isLoggedIn ? (
-        <button onClick={handleLogout} className="px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Logout</button>
+        <>
+          <button onClick={handleLogout} className="px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Logout</button>
+        </>
       ) : (
         <>
+          <NavbarLanguageSelector />
           <Link to={AppRoute.Login} className="px-4 py-2 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-600 hover:bg-blue-100 transition mr-2">Login</Link>
           <Link to={AppRoute.Register} className="px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Register</Link>
         </>

@@ -1,81 +1,38 @@
-import { useCallback } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import HomeIcon from '@mui/icons-material/Home';
-import { Link } from 'react-router-dom';
-import { AppRoute } from 'routes';
-import { useIntl } from 'react-intl';
-import { useAppDispatch, useAppSelector } from '@application/store';
-import {IconButton} from '@mui/material';
-import { resetProfile } from '@application/state-slices';
-import { useAppRouter } from '@infrastructure/hooks/useAppRouter';
-import { NavbarLanguageSelector } from '@presentation/components/ui/NavbarLanguageSelector/NavbarLanguageSelector';
-import { useOwnUserHasRole } from '@infrastructure/hooks/useOwnUser';
-import { UserRoleEnum } from '@infrastructure/apis/client';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AppRoute } from "../../../routes";
+import { NavbarLanguageSelector } from "../../components/ui/NavbarLanguageSelector/NavbarLanguageSelector";
 
-/**
- * This is the navigation menu that will stay at the top of the page.
- */
-export const Navbar = () => {
-  const {formatMessage} = useIntl();
-  const {loggedIn} = useAppSelector(x => x.profileReducer);
-  const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
-  const dispatch = useAppDispatch();
-  const {redirectToHome} = useAppRouter();
-  const logout = useCallback(() => {
-    dispatch(resetProfile());
-    redirectToHome();
-  }, [dispatch, redirectToHome]);
+const Navbar: React.FC<{ isAdmin: boolean; isLoggedIn: boolean; onLogout?: () => void }> = ({ isAdmin, isLoggedIn, onLogout }) => {
+  const navigate = useNavigate();
 
-  return <>
-    <div className="w-full top-0 z-50 fixed">
-      <AppBar>
-        <Toolbar>
-          <div className="grid grid-cols-12 gap-y-5 gap-x-10 justify-center items-center">
-            <div className="col-span-1">
-              <Link
-                  to={AppRoute.Index}> {/* Add a button to redirect to the home page. */}
-                <IconButton>
-                  <HomeIcon style={{color: 'white'}} fontSize='large'/>
-                </IconButton>
-              </Link>
-            </div>
-            {isAdmin && <> { /*If the user is logged in and it is an admin they can have new menu items shown.*/ }
-              <div className="col-span-1">
-                <Button color="inherit">
-                  <Link style={{color: 'white'}} to={AppRoute.Users}>
-                    {formatMessage({id: "globals.users"})}
-                  </Link>
-                </Button>
-              </div>
-              <div className="col-span-1">
-                <Button color="inherit">
-                  <Link style={{color: 'white'}} to={AppRoute.UserFiles}>
-                    {formatMessage({id: "globals.files"})}
-                  </Link>
-                </Button>
-              </div>
-            </>}
-            <div className="-col-end-2 col-span-1">
-              <NavbarLanguageSelector/>
-            </div>
-            <div className="-col-end-1 col-span-1">
-              {!loggedIn && <Button color="inherit">  {/* If the user is not logged in show a button that redirects to the login page. */}
-                <Link style={{color: 'white'}} to={AppRoute.Login}>
-                  {formatMessage({id: "globals.login"})}
-                </Link>
-              </Button>}
-              {loggedIn && <Button onClick={logout} color="inherit"> {/* Otherwise show the logout button. */}
-                {formatMessage({id: "globals.logout"})}
-              </Button>}
-            </div>
-          </div>
-        </Toolbar>
-      </AppBar>
-    </div>
-    <div className="w-full top-0 z-49">
-      <div className="min-h-20"/>
-    </div>
-  </>
-}
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
+    }
+    navigate(AppRoute.Index);
+  };
+
+  return (
+    <nav className="flex items-center gap-4 px-8 py-3 bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
+      <NavbarLanguageSelector />
+      <Link to={AppRoute.Index} className="text-lg font-bold text-blue-700 hover:text-blue-900 transition">Acasă</Link>
+      {isLoggedIn && <Link to={AppRoute.Ingredients} className="text-md text-gray-700 hover:text-blue-700 transition">Ingrediente</Link>}
+      {isLoggedIn && <Link to={AppRoute.MyRecipes} className="text-md text-gray-700 hover:text-blue-700 transition">Rețetele Mele</Link>}
+      {isAdmin && <Link to={AppRoute.Users} className="text-md text-gray-700 hover:text-blue-700 transition">Utilizatori</Link>}
+      <span className="flex-1" />
+      {isLoggedIn ? (
+        <>
+          <button onClick={handleLogout} className="px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Logout</button>
+        </>
+      ) : (
+        <>
+          <Link to={AppRoute.Login} className="px-4 py-2 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-600 hover:bg-blue-100 transition mr-2">Login</Link>
+          <Link to={AppRoute.Register} className="px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Register</Link>
+        </>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;
