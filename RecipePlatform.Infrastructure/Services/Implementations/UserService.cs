@@ -79,10 +79,10 @@ public class UserService : IUserService
 
     public async Task<ServiceResponse> AddUser(UserAddDTO user, UserDTO? requestingUser, CancellationToken cancellationToken = default)
     {
-        if (requestingUser != null && requestingUser.Role != UserRoleEnum.Admin) // Verify who can add the user, you can change this however you se fit.
-        {
-            return ServiceResponse.FromError(new(HttpStatusCode.Forbidden, "Only the admin can add users!", ErrorCodes.CannotAdd));
-        }
+        // if (requestingUser != null && requestingUser.Role != UserRoleEnum.Admin) // Verify who can add the user, you can change this however you se fit.
+        // {
+        //     return ServiceResponse.FromError(new(HttpStatusCode.Forbidden, "Only the admin can add users!", ErrorCodes.CannotAdd));
+        // }
 
         var result = await _repository.GetAsync(new UserSpec(user.Email), cancellationToken);
 
@@ -120,7 +120,7 @@ public class UserService : IUserService
 
             await _repository.UpdateAsync(entity, cancellationToken); // Update the entity and persist the changes.
         }
-        
+
         await _mailService.SendMail(user.Email, "Account Updated!", MailTemplates.UserUpdateTemplate(user.Name), true, "My App", cancellationToken); // You can send a notification on the user email. Change the email if you want.
 
 
